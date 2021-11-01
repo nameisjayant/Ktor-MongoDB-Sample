@@ -32,7 +32,7 @@ fun Route.userRoute(
         get {
             try {
 
-                val user = db.userCollection.find().toList()
+                val user = db.getAllUsers()
                 call.respond(user)
 
             } catch (e: Exception) {
@@ -44,7 +44,7 @@ fun Route.userRoute(
             val id = call.parameters["id"]
 
             try {
-                val user = db.userCollection.find(Users::userId eq id).toList()
+                val user = db.getUserById(id!!)
                 call.respond(user)
 
             } catch (e: Exception) {
@@ -56,7 +56,7 @@ fun Route.userRoute(
             val id = call.parameters["id"]
 
             try {
-                val delete = db.userCollection.deleteOneById(id!!).wasAcknowledged()
+                val delete = db.deleteUserById(id!!)
                 if (delete) {
                     call.respond("user delete")
                 } else {
@@ -68,22 +68,6 @@ fun Route.userRoute(
             }
         }
 
-        put("/{id}") {
-            val requestBody = call.receive<Users>()
-            val id = call.parameters["id"]
-            try {
-                val updated = db.userCollection.updateOneById(id!!, requestBody).wasAcknowledged()
-                if (updated) {
-                    call.respond("user updated!!")
-                } else {
-                    call.respond("user not found")
-                }
-
-            } catch (e: Exception) {
-                application.log.error("Failed to get data", e.message)
-            }
-
-        }
 
     }
 

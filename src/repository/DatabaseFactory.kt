@@ -13,15 +13,14 @@ class DatabaseFactory {
     private val database = client.getDatabase("user")
     val userCollection: CoroutineCollection<Users> = database.getCollection()
 
-//
-//    suspend fun adduser(username: String, email: String, password: String): Users? {
-//        userCollection.insertOne(Users(userId = null, email = email, username = username, password = password))
-//        return userCollection.findOne(Users::email eq email)
-//    }
 
-    suspend fun addUser(users: Users):Users{
+    suspend fun addUser(users: Users): Users {
         userCollection.insertOne(users)
         return users
     }
+
+    suspend fun getAllUsers():List<Users> = userCollection.find().toList()
+    suspend fun getUserById(userId:String):List<Users> = userCollection.find(Users::userId eq userId).toList()
+    suspend fun deleteUserById(userId: String):Boolean = userCollection.deleteOne(Users::userId eq userId).wasAcknowledged()
 
 }
